@@ -1,4 +1,4 @@
-import Component from '@ember/component';
+import Component from "@ember/component";
 
 export default Component.extend({
   // Properties initialized to null
@@ -14,14 +14,16 @@ export default Component.extend({
     this._super(...arguments);
 
     // Select DOM elements
-    const textArea = document.querySelector('.d-editor-textarea-wrapper textarea');
-    const previewWrapper = document.querySelector('.d-editor-preview-wrapper');
-    const scrollParent = document.querySelector('.wmd-controls');
-    this.preview = document.querySelector('.d-editor-preview');
+    const textArea = document.querySelector(
+      ".d-editor-textarea-wrapper textarea"
+    );
+    const previewWrapper = document.querySelector(".d-editor-preview-wrapper");
+    const scrollParent = document.querySelector(".wmd-controls");
+    this.preview = document.querySelector(".d-editor-preview");
 
     // Create and append a style element for active element styling
-    this.activeElementCSSStyleRule = document.createElement('style');
-    this.activeElementCSSStyleRule.type = 'text/css';
+    this.activeElementCSSStyleRule = document.createElement("style");
+    this.activeElementCSSStyleRule.type = "text/css";
     document.head.appendChild(this.activeElementCSSStyleRule);
 
     // Event handler for click events
@@ -42,7 +44,9 @@ export default Component.extend({
     // Event handler for keydown events
     this.keyDownHandler = (event) => {
       // Check if the event key is an arrow key
-      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
+      if (
+        ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)
+      ) {
         setTimeout(() => this.scrollPreviewWrapperToCorrectPosition(event), 0);
       }
     };
@@ -60,15 +64,17 @@ export default Component.extend({
       let previewElement = findElementByLineNumber(lineNumber, previewWrapper);
       if (previewElement) {
         this.updateActiveElementCSSStyleRule(previewElement);
-        previewWrapper.scrollTop = getOffsetTopUntil(previewElement, scrollParent) - parseInt(previewWrapper.clientHeight / 2);
+        previewWrapper.scrollTop =
+          getOffsetTopUntil(previewElement, scrollParent) -
+          parseInt(previewWrapper.clientHeight / 2);
       }
     };
 
     this.scrollTextAreaToCorrectPosition = (ta, lineIndex) => {
-      if(lineIndex === null) return null;
+      if (lineIndex === null) return null;
       const newlines = [-1]; // Index of imaginary \n before first line
       for (let i = 0; i < ta.value.length; ++i) {
-        if (ta.value[i] === '\n') newlines.push(i);
+        if (ta.value[i] === "\n") newlines.push(i);
       }
 
       const selStart = newlines[lineIndex] + 1;
@@ -102,19 +108,18 @@ export default Component.extend({
         // Calculate the vertical center position
         const lineHeight = parseInt(getComputedStyle(ta).lineHeight, 10);
         const textAreaHeight = ta.clientHeight;
-        let verticalCenter = scrollTop - (textAreaHeight / 2) + (lineHeight / 2);
+        let verticalCenter = scrollTop - textAreaHeight / 2 + lineHeight / 2;
 
         // Ensure we never scroll to a negative location
         verticalCenter = Math.max(verticalCenter, 0);
 
         // If the line is near the top and we cannot center it, set scrollTop to 0
-        if (scrollTop < (textAreaHeight / 2)) {
+        if (scrollTop < textAreaHeight / 2) {
           verticalCenter = 0;
         }
 
         // Set the scrollTop on the original textarea to center the selected text vertically
         ta.scrollTop = verticalCenter;
-
       } else {
         // Normal browsers support this method
 
@@ -133,34 +138,47 @@ export default Component.extend({
     // Update the CSS rule for the active element
     this.updateActiveElementCSSStyleRule = (previewElement) => {
       const selector = getUniqueCSSSelector(previewElement);
-      this.activeElementCSSStyleRule.innerHTML =
-        `${selector} { box-shadow: 0px 0px 0px 4px rgba(0,144,237,.7) !important; z-index: 3; }`;
+      this.activeElementCSSStyleRule.innerHTML = `${selector} { box-shadow: 0px 0px 0px 4px rgba(0,144,237,.7) !important; background-color: rgba(0, 144, 237, 0.35); z-index: 3; }`;
     };
 
     // Add event listeners
-    previewWrapper.addEventListener('mousedown', this.clickHandler);
-    textArea.addEventListener('mouseup', this.scrollPreviewWrapperToCorrectPosition);
-    textArea.addEventListener('input', this.scrollPreviewWrapperToCorrectPosition);
-    textArea.addEventListener('keydown', this.keyDownHandler); // Only for arrow keys
+    previewWrapper.addEventListener("mousedown", this.clickHandler);
+    textArea.addEventListener(
+      "mouseup",
+      this.scrollPreviewWrapperToCorrectPosition
+    );
+    textArea.addEventListener(
+      "input",
+      this.scrollPreviewWrapperToCorrectPosition
+    );
+    textArea.addEventListener("keydown", this.keyDownHandler); // Only for arrow keys
   },
 
   willDestroyElement() {
     this._super(...arguments);
 
     // Clean up: Remove event listeners and style element
-    const textArea = document.querySelector('.d-editor-textarea-wrapper textarea');
-    const previewWrapper = document.querySelector('.d-editor-preview-wrapper');
+    const textArea = document.querySelector(
+      ".d-editor-textarea-wrapper textarea"
+    );
+    const previewWrapper = document.querySelector(".d-editor-preview-wrapper");
 
-    previewWrapper.removeEventListener('click', this.clickHandler);
-    textArea.removeEventListener('mouseup', this.scrollPreviewWrapperToCorrectPosition);
-    textArea.removeEventListener('input', this.scrollPreviewWrapperToCorrectPosition);
-    textArea.removeEventListener('keydown', this.keyDownHandler);
+    previewWrapper.removeEventListener("click", this.clickHandler);
+    textArea.removeEventListener(
+      "mouseup",
+      this.scrollPreviewWrapperToCorrectPosition
+    );
+    textArea.removeEventListener(
+      "input",
+      this.scrollPreviewWrapperToCorrectPosition
+    );
+    textArea.removeEventListener("keydown", this.keyDownHandler);
 
     if (this.activeElementCSSStyleRule) {
       document.head.removeChild(this.activeElementCSSStyleRule);
       this.activeElementCSSStyleRule = null;
     }
-  }
+  },
 });
 
 function findElementByLineNumber(line, pane) {
@@ -187,7 +205,7 @@ function getLineNumber(target) {
     return lineNumber;
   } else {
     // If the element is the document root, the attribute wasn't found
-    if (target.nodeName === 'HTML') {
+    if (target.nodeName === "HTML") {
       return null; // Attribute not found
     }
     // Move up to the parent element and check again
@@ -206,7 +224,7 @@ function getOffsetTopUntil(elem, parent) {
 function getUniqueCSSSelector(el) {
   // get a unique selector (that can be used in a persistent CSS rule)
   var stack = [];
-  while (el.parentNode != null && el.nodeName.toLowerCase() !== 'html') {
+  while (el.parentNode != null && el.nodeName.toLowerCase() !== "html") {
     var sibCount = 0;
     var sibIndex = 0;
     for (var i = 0; i < el.parentNode.childNodes.length; i++) {
@@ -218,10 +236,12 @@ function getUniqueCSSSelector(el) {
         sibCount++;
       }
     }
-    if (el.hasAttribute('id') && el.id != '') {
-      stack.unshift(el.nodeName.toLowerCase() + '#' + el.id);
+    if (el.hasAttribute("id") && el.id != "") {
+      stack.unshift(el.nodeName.toLowerCase() + "#" + el.id);
     } else if (sibCount > 1) {
-      stack.unshift(el.nodeName.toLowerCase() + ':nth-of-type(' + (sibIndex + 1) + ')');
+      stack.unshift(
+        el.nodeName.toLowerCase() + ":nth-of-type(" + (sibIndex + 1) + ")"
+      );
     } else {
       stack.unshift(el.nodeName.toLowerCase());
     }
@@ -233,8 +253,8 @@ function getUniqueCSSSelector(el) {
 
 function isSafari() {
   const userAgent = navigator.userAgent;
-  const isChrome = userAgent.indexOf('Chrome') > -1;
-  const isSafari = userAgent.indexOf('Safari') > -1;
+  const isChrome = userAgent.indexOf("Chrome") > -1;
+  const isSafari = userAgent.indexOf("Safari") > -1;
 
   // Chrome has both 'Chrome' and 'Safari' inside userAgent string.
   // Safari has only 'Safari'.
