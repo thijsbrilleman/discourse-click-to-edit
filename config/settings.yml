@@ -1,0 +1,4 @@
+plugins:
+  enable_discourse_click_to_edit:
+    default: true
+    client: true

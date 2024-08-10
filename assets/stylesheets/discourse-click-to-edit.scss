@@ -1,0 +1,39 @@
+// no css yet
+
+.d-editor-preview-wrapper .d-editor-preview {
+
+	@mixin activeComposerPreviewElement {
+		box-shadow: 0px 0px 0px 4px rgba(0,144,237,.35) !important;
+		z-index: 3;
+	}
+
+	&, a {
+		cursor: zoom-in !important;
+	}
+
+	a, p, em, strong, code, h1, h2, pre > code > span {
+		&:not(:has(:hover)):hover {
+			@include activeComposerPreviewElement;
+		}
+	}
+
+	.now-editing { // separate from the former selector due to Firefox incompatibilities
+		@include activeComposerPreviewElement;
+	}
+
+	// collapse last span in codeblock if empty
+    pre > code > span:not(:last-child) {
+    	display: inline-block;
+    	width: inherit;
+    	min-width: 100%;
+    }
+
+    // Different styles for roadmap plugin
+	div[data-wrap=roadmap] {
+
+		// override roadmap plugin preview pane style; not necessary anymore with this plugin
+        img:not(.emoji) {
+            max-height: none !important;
+        }
+    }
+}
