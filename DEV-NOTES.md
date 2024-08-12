@@ -2,18 +2,17 @@
 
 Two methods:
 
-- **Safari** 
-get text-area content, split at cursor position; put first half in clone of textarea, determine scroll height in that clone, scroll to that position in the textarea
+- **Safari**
+  get text-area content, split at cursor position; put first half in clone of textarea, determine scroll height in that clone, scroll to that position in the textarea
 
-- **All other browsers** 
-no workarounds needed. Behavior differs over browsers a bit, some center cursor position in vertical middle, others don't, but it's always visible. It's a bit beter performance this way. If I want to control it more I can always switch to Safari's method.
-
+- **All other browsers**
+  no workarounds needed. Behavior differs over browsers a bit, some center cursor position in vertical middle, others don't, but it's always visible. It's a bit beter performance this way. If I want to control it more I can always switch to Safari's method.
 
 # Challenge: scrolling to the right position in the composer preview
 
-Situation: 
+Situation:
 
-- In **Safari**, in many cases the preview-wrapper increases in height *after* the event handler has already scrolled to the correct position. This means that towards the second half of the preview misalignments starts increasing to the level of falling out of the wrapper. This can be 'fixed' by having delaying some input onInput/onKeyup bventHandlers, but this introduces flicker every so many characters typed. 
+- In **Safari**, in many cases the preview-wrapper increases in height _after_ the event handler has already scrolled to the correct position. This means that towards the second half of the preview misalignments starts increasing to the level of falling out of the wrapper. This can be 'fixed' by having delaying some input onInput/onKeyup bventHandlers, but this introduces flicker every so many characters typed.
 
 You can fully fix the problem by enabling the `enable_diffhtml_preview` sitesetting. This gives an (acceptably) slower preview performance in Safari.
 
@@ -31,10 +30,8 @@ x ResizeObserver doesn't trigger, so it's definitely not that.
 
 Other option:
 
-- Use Ember's schedule({afteradopt: ...}) >> werkt ook niet
+- Use Ember's schedule({afteradopt: ...}) >> doesn't work either
 
 Found solution:
 
 - Make sure the `.d-editor-preview` element's height cannot become smaller when updating it's contents due to editing! You can do this setting the `min-height` on the element to the current height of the element (or a bit bigger?) before discourse updates the contents of the element. Then it will never collapse and you won't have any trouble! I think it has something to do with the way the browser.
-
-It fucking works!!!
